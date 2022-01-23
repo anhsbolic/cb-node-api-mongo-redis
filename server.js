@@ -4,6 +4,9 @@ require('dotenv').config();
 const db = require('./db');
 const respond = require('./helper/respond');
 
+// router
+const productRouter = require('./app/product/router');
+
 // app
 const port = process.env.PORT || 3000;
 const app = express();
@@ -28,9 +31,7 @@ db.on('reconnected', function () {
 });
 
 // api routes
-app.get('/', (req, res) => {
-  res.end('HELLO DUNYA');
-});
+app.use('/product', productRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

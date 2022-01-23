@@ -7,7 +7,7 @@ const list = async (query) => {
   let pipelines = [];
 
   // unset fields
-  let unset = { $unset: ['__v', 'updatedAt'] };
+  let unset = { $unset: ['__v'] };
   pipelines.push(unset);
 
   // init filters
@@ -47,7 +47,7 @@ const list = async (query) => {
 };
 
 const findById = async (id) => {
-  return await Product.findOne({ _id: id }).select('-__v -updatedAt').lean();
+  return await Product.findOne({ _id: id }).select('-__v').lean();
 };
 
 const create = async (data) => {
@@ -56,7 +56,11 @@ const create = async (data) => {
 };
 
 const update = async (id, data) => {
-  return await Product.updateOne({ _id: id }, data);
+  return await Product.findOneAndUpdate({ _id: id }, data, {
+    returnOriginal: false,
+  })
+    .select('-__v')
+    .lean();
 };
 
 const deleteOne = async (id) => {

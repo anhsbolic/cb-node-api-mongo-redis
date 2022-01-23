@@ -1,7 +1,6 @@
 const Joi = require('joi');
-const moment = require('moment');
 const error = require('../../helper/error');
-const utils = require('../../utils');
+const productCache = require('./cache');
 const productRepository = require('./repository');
 
 /**
@@ -52,11 +51,23 @@ const create = async (data) => {
  * @param {String} id product id
  */
 const detail = async (id) => {
+  // data from redis cache when available
+  let redisData = await productCache.getProductDetail(id);
+  if (redisData) {
+    let product = JSON.parse(redisData);
+    return product;
+  }
+
+  // data from db when unavaliable at redis cache
   let product = await productRepository.findById(id);
   if (!product) {
     error.throwNotFound();
   }
 
+  // store data to redis cache
+  await productCache.setProductDetail(id, product);
+
+  // result
   return product;
 };
 
@@ -84,18 +95,23 @@ const update = async (id, data) => {
     error.throwBadRequest(err.details[0]?.message);
   }
 
-  // update
-  let updateData = {
+  // data
+  let updatedData = {
     name: data.name,
     description: data.description,
     price: data.price,
   };
 
-  let updatedProduct = await productRepository.update(product._id, updateData);
+  // update
+  let updatedProduct = await productRepository.update(product._id, updatedData);
   if (!updatedProduct) {
     error.throwInternalServerError('Update Product Fail');
   }
 
+  // delete data from redis cache
+  await productCache.deleteProductDetail(id);
+
+  // result
   return updatedProduct;
 };
 
@@ -113,6 +129,9 @@ const deleteOne = async (id) => {
   if (!deletedProduct) {
     error.throwInternalServerError('Delete Product Fail');
   }
+
+  // delete data from redis cache
+  await productCache.deleteProductDetail(id);
 
   return true;
 };

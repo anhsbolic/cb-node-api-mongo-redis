@@ -1,0 +1,27 @@
+{
+  "name": "cb-node-api-mongo-redis",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anhsbolic/cb-node-api-mongo-redis.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anhsbolic/cb-node-api-mongo-redis/issues"
+  },
+  "homepage": "https://github.com/anhsbolic/cb-node-api-mongo-redis#readme",
+  "dependencies": {
+    "dotenv": "^14.2.0",
+    "express": "^4.17.2",
+    "joi": "^17.5.0",
+    "moment": "^2.29.1",
+    "mongoose": "^6.1.7",
+    "redis": "^4.0.2"
+  }
+}

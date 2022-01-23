@@ -9,7 +9,7 @@ const productRepository = require('./repository');
  * @param {Object} query values for filtering needs
  */
 const index = async (query) => {
-  let products = await productRepository.list();
+  let products = await productRepository.list(query);
 
   return products;
 };

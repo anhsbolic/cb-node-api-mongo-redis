@@ -4,32 +4,6 @@
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-## Instructions : Without Docker
-
-### Prerequisites
-
-1. have git installed
-2. have node installed (currently use node 16 version)
-3. have npm installed
-4. have mongodb up and running
-5. have redis up and running
-
-### Install & Run App for Development
-
-1. Pull this repo and switch to intended branch
-2. See .env.example file then set the environment variables
-3. Install dependencies
-
-```
-$ npm install
-```
-
-4. Start the application:
-
-```
-$ npm run dev
-```
-
 ## Instructions : With Docker
 
 ### Prerequisites
@@ -58,4 +32,30 @@ $ docker-compose up
 
 ```
 $ docker-compose up --build
+```
+
+## Instructions : Without Docker
+
+### Prerequisites
+
+1. have git installed
+2. have node installed (currently use node 16 version)
+3. have npm installed
+4. have mongodb up and running
+5. have redis up and running
+
+### Install & Run App for Development
+
+1. Pull this repo and switch to intended branch
+2. See .env.example file then set the environment variables
+3. Install dependencies
+
+```
+$ npm install
+```
+
+4. Start the application:
+
+```
+$ npm run dev
 ```

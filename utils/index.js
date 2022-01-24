@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
-const toMongoObjId = (string) => {
-  return mongoose.Types.ObjectId(string);
+const toMongoObjId = async (string) => {
+  return await mongoose.Types.ObjectId(string);
 };
 
 module.exports = { toMongoObjId };

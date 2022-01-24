@@ -6,10 +6,6 @@ const list = async (query) => {
   // init aggregate pipelines
   let pipelines = [];
 
-  // unset fields
-  let unset = { $unset: ['__v'] };
-  pipelines.push(unset);
-
   // init filters
   let filters = [{}];
 
@@ -33,6 +29,10 @@ const list = async (query) => {
     }
     pipelines.push({ $sort: sort });
   }
+
+  // unset fields
+  let unset = { $unset: ['__v'] };
+  pipelines.push(unset);
 
   // pagination
   let pageVal = page ? parseInt(page) : 0;

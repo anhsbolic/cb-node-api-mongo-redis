@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 require('../app/product/model');
+require('../app/purchaseOrder/model');
 
 const url = process.env.MONGO_CONNECTION_STRING;
 mongoose.connect(url, {

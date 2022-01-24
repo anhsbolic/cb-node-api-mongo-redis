@@ -23,6 +23,10 @@ let billingSchema = mongoose.Schema(
       type: Date,
       required: false,
     },
+    cancelled_date: {
+      type: Date,
+      required: false,
+    },
     item: {
       name: {
         type: String,

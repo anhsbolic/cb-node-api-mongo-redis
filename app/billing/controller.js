@@ -83,10 +83,46 @@ const deleteOne = async (req, res) => {
   }
 };
 
+/**
+ * Billing API : Pay Billing
+ * @param {Object} req express request object
+ * @param {Object} res express response object
+ */
+const payBilling = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const result = await billingService.payBilling(id, req.body);
+    return respond.responseSuccess(res, 'Billing Paid', result);
+  } catch (e) {
+    logger.info(e);
+    return respond.responseError(res, e.statusCode, e.message);
+  }
+};
+
+/**
+ * Billing API : Cancel Billing
+ * @param {Object} req express request object
+ * @param {Object} res express response object
+ */
+const cancelBilling = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const result = await billingService.cancelBilling(id, req.body);
+    return respond.responseSuccess(res, 'Billing Cancelled', result);
+  } catch (e) {
+    logger.info(e);
+    return respond.responseError(res, e.statusCode, e.message);
+  }
+};
+
 module.exports = {
   index,
   create,
   detail,
   update,
   deleteOne,
+  payBilling,
+  cancelBilling,
 };

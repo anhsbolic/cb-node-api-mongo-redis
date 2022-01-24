@@ -4,6 +4,7 @@ const billingCache = require('./cache');
 const billingHelper = require('./helper');
 const billingRepository = require('./repository');
 const purchaseOrderRepository = require('../purchaseOrder/repository');
+const moment = require('moment');
 
 /**
  * Get List of Billing with Filter & Pagination
@@ -149,9 +150,9 @@ const update = async (id, data) => {
     error.throwBadRequest(err.details[0]?.message);
   }
 
-  // only unpaid purchase order can be update
+  // only unpaid billing can be update
   if (billing.status !== 'unpaid') {
-    error.throwBadRequest('Only Unpaid PO can be update');
+    error.throwBadRequest('Only Unpaid Billing can be update');
   }
 
   // data
@@ -194,10 +195,82 @@ const deleteOne = async (id) => {
   return true;
 };
 
+/**
+ * Pay Billing
+ * @param {String} id billing id
+ * @param {Object} data all data required to create a billing
+ */
+const payBilling = async (id, data) => {
+  let billing = await billingRepository.findById(id);
+  if (!billing) {
+    error.throwNotFound();
+  }
+
+  // only unpaid billing can be paid
+  if (billing.status !== 'unpaid') {
+    error.throwBadRequest('Only Unpaid Billing can be paid');
+  }
+
+  // data
+  let updatedData = {
+    paid_date: moment().utc(),
+    status: 'paid',
+  };
+
+  // update
+  let updatedBilling = await billingRepository.update(billing._id, updatedData);
+  if (!updatedBilling) {
+    error.throwInternalServerError('Update Billing Fail');
+  }
+
+  // delete data from redis cache
+  await billingCache.deleteBillingDetail(id);
+
+  // result
+  return updatedBilling;
+};
+
+/**
+ * Cancel Billing
+ * @param {String} id billing id
+ * @param {Object} data all data required to create a billing
+ */
+const cancelBilling = async (id, data) => {
+  let billing = await billingRepository.findById(id);
+  if (!billing) {
+    error.throwNotFound();
+  }
+
+  // only unpaid billing can be cancel
+  if (billing.status !== 'unpaid') {
+    error.throwBadRequest('Only Unpaid Billing can be cancel');
+  }
+
+  // data
+  let updatedData = {
+    cancelled_date: moment().utc(),
+    status: 'cancelled',
+  };
+
+  // update
+  let updatedBilling = await billingRepository.update(billing._id, updatedData);
+  if (!updatedBilling) {
+    error.throwInternalServerError('Update Billing Fail');
+  }
+
+  // delete data from redis cache
+  await billingCache.deleteBillingDetail(id);
+
+  // result
+  return updatedBilling;
+};
+
 module.exports = {
   index,
   create,
   detail,
   update,
   deleteOne,
+  payBilling,
+  cancelBilling,
 };

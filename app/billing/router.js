@@ -10,4 +10,7 @@ router.get('/:id', billingController.detail);
 router.put('/:id', billingController.update);
 router.delete('/:id', billingController.deleteOne);
 
+router.post('/:id/pay', billingController.payBilling);
+router.post('/:id/cancel', billingController.cancelBilling);
+
 module.exports = router;

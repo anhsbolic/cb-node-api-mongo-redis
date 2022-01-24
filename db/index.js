@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+require('../app/billing/model');
 require('../app/product/model');
 require('../app/purchaseOrder/model');
 

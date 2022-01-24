@@ -1,8 +1,7 @@
-const { PurchaseOrder } = require('./model');
-const utils = require('../../utils');
+const { Billing } = require('./model');
 
 const list = async (query) => {
-  const { page, limit, status, product, search, sort_by } = query;
+  const { page, limit, status, search, sort_by } = query;
 
   // init aggregate pipelines
   let pipelines = [];
@@ -15,15 +14,9 @@ const list = async (query) => {
     filters.push({ status: status });
   }
 
-  // filter : product by id
-  if (product && product !== '') {
-    let productId = await utils.toMongoObjId(product);
-    filters.push({ 'product._id': productId });
-  }
-
   // filter : search
   if (search && search !== '') {
-    filters.push({ po_number: search });
+    filters.push({ billing_number: search });
   }
 
   // filters
@@ -36,14 +29,14 @@ const list = async (query) => {
       sort = { createdAt: 1 };
     } else if (sort_by === 'created_at_desc') {
       sort = { createdAt: -1 };
-    } else if (sort_by === 'po_date_asc') {
-      sort = { po_date: 1 };
-    } else if (sort_by === 'po_date_desc') {
-      sort = { po_date: -1 };
-    } else if (sort_by === 'product_asc') {
-      sort = { 'product.name': 1 };
-    } else if (sort_by === 'product_desc') {
-      sort = { 'product.name': -1 };
+    } else if (sort_by === 'billing_date_asc') {
+      sort = { billing_date: 1 };
+    } else if (sort_by === 'billing_date_desc') {
+      sort = { billing_date: -1 };
+    } else if (sort_by === 'due_date_asc') {
+      sort = { due_date: 1 };
+    } else if (sort_by === 'due_date_desc') {
+      sort = { due_date: -1 };
     }
 
     pipelines.push({ $sort: sort });
@@ -62,20 +55,26 @@ const list = async (query) => {
   }
 
   // result
-  return await PurchaseOrder.aggregate(pipelines);
+  return await Billing.aggregate(pipelines);
 };
 
 const findById = async (id) => {
-  return await PurchaseOrder.findOne({ _id: id }).select('-__v').lean();
+  return await Billing.findOne({ _id: id }).select('-__v').lean();
+};
+
+const findByPoId = async (poId) => {
+  return await Billing.findOne({ purchase_order: poId })
+    .populate('purchase_order')
+    .lean();
 };
 
 const create = async (data) => {
-  let purchaseOrder = new PurchaseOrder(data);
-  return await purchaseOrder.save();
+  let billing = new Billing(data);
+  return await billing.save();
 };
 
 const update = async (id, data) => {
-  return await PurchaseOrder.findOneAndUpdate({ _id: id }, data, {
+  return await Billing.findOneAndUpdate({ _id: id }, data, {
     returnOriginal: false,
   })
     .select('-__v')
@@ -83,7 +82,7 @@ const update = async (id, data) => {
 };
 
 const deleteOne = async (id) => {
-  return await PurchaseOrder.deleteOne({ _id: id });
+  return await Billing.deleteOne({ _id: id });
 };
 
-module.exports = { list, findById, create, update, deleteOne };
+module.exports = { list, findById, findByPoId, create, update, deleteOne };

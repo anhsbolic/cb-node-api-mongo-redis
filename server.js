@@ -5,6 +5,7 @@ const db = require('./db');
 const respond = require('./helper/respond');
 
 // router
+const billingRouter = require('./app/billing/router');
 const productRouter = require('./app/product/router');
 const purchaseOrderRouter = require('./app/purchaseOrder/router');
 
@@ -32,6 +33,7 @@ db.on('reconnected', function () {
 });
 
 // api routes
+app.use('/billing', billingRouter);
 app.use('/product', productRouter);
 app.use('/purchase-order', purchaseOrderRouter);
 

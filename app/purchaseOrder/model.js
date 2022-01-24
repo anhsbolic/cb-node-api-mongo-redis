@@ -41,6 +41,6 @@ let purchaseOrderSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-purchaseOrderSchema.index({ createdAt: -1 });
+purchaseOrderSchema.index({ createdAt: 1 });
 
 exports.PurchaseOrder = mongoose.model('PurchaseOrder', purchaseOrderSchema);

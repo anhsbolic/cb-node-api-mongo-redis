@@ -106,8 +106,6 @@ const create = async (data) => {
       billing_id: createdBilling._id.toString(),
       invoice_date: moment().utc().format('YYYY-MM-DD'),
     };
-    console.log('createInvoiceData');
-    console.log(createInvoiceData);
     await invoiceService.create(createInvoiceData);
   }
 

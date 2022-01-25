@@ -5,6 +5,7 @@ const billingCache = require('./cache');
 const billingHelper = require('./helper');
 const billingRepository = require('./repository');
 const purchaseOrderRepository = require('../purchaseOrder/repository');
+const invoiceService = require('../invoice/service');
 
 /**
  * Get List of Billing with Filter & Pagination
@@ -26,6 +27,7 @@ const create = async (data) => {
     po_id: Joi.string().required(),
     billing_date: Joi.date().required(),
     due_date: Joi.date().min(Joi.ref('billing_date')).required(),
+    auto_create_invoice: Joi.boolean().default(false),
   });
 
   try {
@@ -96,6 +98,17 @@ const create = async (data) => {
   if (!updatedPo) {
     await billingRepository.deleteOne(createdBilling._id);
     error.throwInternalServerError('Create Billing Fail');
+  }
+
+  // create invoice when auto_create_invoice flag true
+  if (data.auto_create_invoice && data.auto_create_invoice === true) {
+    let createInvoiceData = {
+      billing_id: createdBilling._id.toString(),
+      invoice_date: moment().utc().format('YYYY-MM-DD'),
+    };
+    console.log('createInvoiceData');
+    console.log(createInvoiceData);
+    await invoiceService.create(createInvoiceData);
   }
 
   // result
